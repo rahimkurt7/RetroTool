@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDrop } from "react-dnd";
 import { FaInfoCircle } from "react-icons/fa";
 
+
 const Category = ({ id, title, description, onDrop, children }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -22,7 +23,7 @@ const Category = ({ id, title, description, onDrop, children }) => {
         minHeight: "200px",
         padding: "10px",
         borderRadius: "10px",
-        backgroundColor: isOver ? "#e0e0e0" : "#f4f4f4",
+        backgroundColor: isOver ? "#ffffff" : "#f4f4f4",
         position: "relative", // Tooltip için önemli
       }}
     >

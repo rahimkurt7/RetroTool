@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Wheel } from "react-custom-roulette";
 import Questions from "./Questions";
 
-
 const SpinWheel = () => {
   // Kişi Çarkı için state
-  const [personOptions, setPersonOptions] = useState([
+  const [kisiSecenekleri, setKisiSecenekleri] = useState([
     { option: "UÇAN KARPUZ" },
     { option: "MAVİ TOP" },
     { option: "EMEKÇİ" },
@@ -16,7 +15,7 @@ const SpinWheel = () => {
   ]);
 
   // Soru Çarkı için state
-  const [questionOptions, setQuestionOptions] = useState([
+  const [soruSecenekleri, setSoruSecenekleri] = useState([
     { option: "Bu sprintte takım olarak|en iyi yaptığımız şey neydi?" },
     { option: "Sence bildiğin|en gereksiz bilgi nedir?" },
     { option: "Sprint boyunca|en büyük zorluk neydi?" },
@@ -24,53 +23,52 @@ const SpinWheel = () => {
     { option: "Bu sprintte hatalarımızdan|öğrendiğimiz şey neydi?" },
     { option: "Tatilinden en ilginç|bir anını anlat!" },
   ]);
-  
 
   // Kişi Çarkı için state
-  const [mustSpinPerson, setMustSpinPerson] = useState(false);
-  const [prizeNumberPerson, setPrizeNumberPerson] = useState(0);
-  const [isPersonDeleteActive, setIsPersonDeleteActive] = useState(false);
+  const [kisiDonmeliMi, setKisiDonmeliMi] = useState(false);
+  const [kazananKisi, setKazananKisi] = useState(0);
+  const [kisiSilAktif, setKisiSilAktif] = useState(false);
 
   // Soru Çarkı için state
-  const [mustSpinQuestion, setMustSpinQuestion] = useState(false);
-  const [prizeNumberQuestion, setPrizeNumberQuestion] = useState(0);
-  const [isQuestionDeleteActive, setIsQuestionDeleteActive] = useState(false);
+  const [soruDonmeliMi, setSoruDonmeliMi] = useState(false);
+  const [kazananSoru, setKazananSoru] = useState(0);
+  const [soruSilAktif, setSoruSilAktif] = useState(false);
 
-  // Kişi çarkını başlat
-  const handleSpinPerson = () => {
-    if (personOptions.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * personOptions.length);
-    setPrizeNumberPerson(randomIndex);
-    setMustSpinPerson(true);
-    setIsPersonDeleteActive(true);
-    setIsQuestionDeleteActive(false);
+  // Kişi çarkını döndürme
+  const kisiCarkiDondur = () => {
+    if (kisiSecenekleri.length === 0) return;
+    const rastgeleIndex = Math.floor(Math.random() * kisiSecenekleri.length);
+    setKazananKisi(rastgeleIndex);
+    setKisiDonmeliMi(true);
+    setKisiSilAktif(true);
+    setSoruSilAktif(false);
   };
 
-  // Soru çarkını başlat
-  const handleSpinQuestion = () => {
-    if (questionOptions.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * questionOptions.length);
-    setPrizeNumberQuestion(randomIndex);
-    setMustSpinQuestion(true);
-    setIsQuestionDeleteActive(true);
-    setIsPersonDeleteActive(false);
+  // Soru çarkını döndürme
+  const soruCarkiDondur = () => {
+    if (soruSecenekleri.length === 0) return;
+    const rastgeleIndex = Math.floor(Math.random() * soruSecenekleri.length);
+    setKazananSoru(rastgeleIndex);
+    setSoruDonmeliMi(true);
+    setSoruSilAktif(true);
+    setKisiSilAktif(false);
   };
 
-  // Kişi seçeneğini silme fonksiyonu
-  const handleDeletePerson = () => {
-    if (isPersonDeleteActive && personOptions.length > 0) {
-      const updatedPersons = personOptions.filter((_, idx) => idx !== prizeNumberPerson);
-      setPersonOptions(updatedPersons);
-      setIsPersonDeleteActive(false);
+  // Kişi seçeneğini silme
+  const kisiSil = () => {
+    if (kisiSilAktif && kisiSecenekleri.length > 0) {
+      const guncellenmisKisiler = kisiSecenekleri.filter((_, idx) => idx !== kazananKisi);
+      setKisiSecenekleri(guncellenmisKisiler);
+      setKisiSilAktif(false);
     }
   };
 
-  // Soru seçeneğini silme fonksiyonu
-  const handleDeleteQuestion = () => {
-    if (isQuestionDeleteActive && questionOptions.length > 0) {
-      const updatedQuestions = questionOptions.filter((_, idx) => idx !== prizeNumberQuestion);
-      setQuestionOptions(updatedQuestions);
-      setIsQuestionDeleteActive(false);
+  // Soru seçeneğini silme
+  const soruSil = () => {
+    if (soruSilAktif && soruSecenekleri.length > 0) {
+      const guncellenmisSorular = soruSecenekleri.filter((_, idx) => idx !== kazananSoru);
+      setSoruSecenekleri(guncellenmisSorular);
+      setSoruSilAktif(false);
     }
   };
 
@@ -81,86 +79,78 @@ const SpinWheel = () => {
         <div style={styles.wheelContainer}>
           <h2>Kişi Çarkı</h2>
           <Wheel
-            mustStartSpinning={mustSpinPerson}
-            prizeNumber={prizeNumberPerson}
-            data={personOptions}
+            mustStartSpinning={kisiDonmeliMi}
+            prizeNumber={kazananKisi}
+            data={kisiSecenekleri}
             backgroundColors={["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#8AFF8A"]}
             textColors={["#ffffff"]}
             outerBorderWidth={1}
             innerBorderWidth={1}
             outerBorderColor={"#FF6384"}
             innerBorderColor={"#FF6384"}
-            onStopSpinning={() => setMustSpinPerson(false)}
+            onStopSpinning={() => setKisiDonmeliMi(false)}
           />
-          <button style={styles.spinButton} onClick={handleSpinPerson}>
+          <button style={styles.spinButton} onClick={kisiCarkiDondur}>
             Spin
           </button>
           <button
             style={{
               ...styles.deleteButton,
-              backgroundColor: isPersonDeleteActive ? "#bdbdbd" : "#e0e0e0",
-              cursor: isPersonDeleteActive ? "pointer" : "not-allowed",
+              backgroundColor: kisiSilAktif ? "#bdbdbd" : "#e0e0e0",
+              cursor: kisiSilAktif ? "pointer" : "not-allowed",
             }}
-            disabled={!isPersonDeleteActive}
-            onClick={handleDeletePerson}
+            disabled={!kisiSilAktif}
+            onClick={kisiSil}
           >
             Delete
           </button>
         </div>
-{/* Soru Çarkı */}
-<div style={styles.wheelContainer}>
-  <h2>Soru Çarkı</h2>
-  <Wheel
-    mustStartSpinning={mustSpinQuestion}
-    prizeNumber={prizeNumberQuestion}
-    data={questionOptions}
-    backgroundColors={["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#8AFF8A"]}
-    textColors={["#ffffff"]}
-    outerBorderWidth={1}
-    innerBorderWidth={1}
-    outerBorderColor={"#36A2EB"}
-    innerBorderColor={"#36A2EB"}
-    fontSize={9}
-    textDistance={60}
-    perpendicularText={true}
-    onStopSpinning={() => setMustSpinQuestion(false)}
-    textRender={(text) =>
-      text.split("|").map((line, index) => (
-        <tspan key={index} x="0" dy={index === 0 ? 0 : 12}>
-          {line}
-        </tspan>
-      ))
-    }
-  />
 
-  
+        {/* Soru Çarkı */}
+        <div style={styles.wheelContainer}>
+          <h2>Soru Çarkı</h2>
+          <Wheel
+            mustStartSpinning={soruDonmeliMi}
+            prizeNumber={kazananSoru}
+            data={soruSecenekleri}
+            backgroundColors={["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#8AFF8A"]}
+            textColors={["#ffffff"]}
+            outerBorderWidth={1}
+            innerBorderWidth={1}
+            outerBorderColor={"#36A2EB"}
+            innerBorderColor={"#36A2EB"}
+            fontSize={9}
+            textDistance={60}
+            perpendicularText={true}
+            onStopSpinning={() => setSoruDonmeliMi(false)}
+          />
 
-  <button style={styles.spinButton} onClick={handleSpinQuestion}>
-    Spin
-  </button>
-  <button
-    style={{
-      ...styles.deleteButton,
-      backgroundColor: isQuestionDeleteActive ? "#bdbdbd" : "#e0e0e0",
-      cursor: isQuestionDeleteActive ? "pointer" : "not-allowed",
-    }}
-    disabled={!isQuestionDeleteActive}
-    onClick={handleDeleteQuestion}
-  >
-    Delete
-  </button>
-</div>
-{/* Sorular Sayfasını Buraya Entegre Ettik */}
-<div style={styles.questionsContainer}>
-    <Questions questionOptions={questionOptions} setQuestionOptions={setQuestionOptions} />
-  </div>
+          <button style={styles.spinButton} onClick={soruCarkiDondur}>
+            Spin
+          </button>
+          <button
+            style={{
+              ...styles.deleteButton,
+              backgroundColor: soruSilAktif ? "#bdbdbd" : "#e0e0e0",
+              cursor: soruSilAktif ? "pointer" : "not-allowed",
+            }}
+            disabled={!soruSilAktif}
+            onClick={soruSil}
+          >
+            Delete
+          </button>
+        </div>
+
+        {/* Sorular Bileşeni */}
+        <div style={styles.questionsContainer}>
+          <Questions questionOptions={soruSecenekleri} setQuestionOptions={setSoruSecenekleri} />
+        </div>
       </div>
-      
     </div>
   );
 };
 
-// Stil Ayarları
+// Stil Ayarları 
 const styles = {
   container: {
     display: "flex",
@@ -198,6 +188,7 @@ const styles = {
     alignItems: "center",
     zIndex: 10,
     opacity: 1,
+  
   },
   deleteButton: {
     marginTop: "20px",
