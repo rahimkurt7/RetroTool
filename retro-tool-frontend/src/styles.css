@@ -2,22 +2,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+ 
 }
 
 .categories {
   display: flex;
   justify-content: space-around;
   width: 100%;
+  min-height: 550px;
+
 }
 
 .category {
   width: 18%;
-  min-height: 650px;
-  background: #f4f4f4;
+  min-height: 350px;
+  background:#ffffff;
   padding: 10px;
   border-radius: 10px;
   text-align: center;
- 
 
   gap: 10px;
 }
@@ -166,15 +168,7 @@
   width: 100%;
 }
 
-.category {
-  width: 18%;
-  min-height: 300px;
-  background: #f4f4f4;
-  padding: 10px;
-  border-radius: 10px;
-  text-align: center;
-  position: relative;
-}
+
 
 .category-header {
   display: flex;
@@ -198,3 +192,8 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+
+
+
+

@@ -1,0 +1,115 @@
+/* Genel Konteyner */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+/* Çarkları Yan Yana Dizmek İçin */
+.wheelsRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+}
+
+/* Çark Konteyneri */
+.wheelContainer {
+    text-align: center;
+    position: relative;
+}
+
+/* Spin Butonu */
+.spinButton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #FF5733;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    opacity: 1;
+}
+
+/* Silme Butonu */
+.deleteButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    color: #555;
+    width: 100px;
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+}
+
+/* Sorular Konteyneri */
+.questionsContainer {
+    width: 250px;
+}
+
+/* Sorular Paneli */
+.questionsPanel {
+    width: 250px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+/* Soru Listesi */
+.questionList {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+/* Soru Elemanı */
+.questionItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Input Alanı */
+.inputField {
+    width: 80%;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+/* Ekle Butonu */
+.addButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+/* Sil Butonu */
+.deleteButton {
+    background-color: #f44336;
+    color: white;
+    padding: 8px;
+    border: none;
+    cursor: pointer;
+}
