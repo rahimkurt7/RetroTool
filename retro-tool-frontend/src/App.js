@@ -6,22 +6,34 @@ import Navbar from "./components/Navbar";
 import Board from "./components/Board";
 import HomePage from "./pages/HomePage";
 import Questions from "./pages/Questions";
-import SpinWheel from "./pages/SpinWheel";  // ✅ Kendi oluşturduğun SpinWheel bileşeni çağırıldı
+import SpinWheel from "./pages/SpinWheel";
+import CreatePollPage from "./pages/CreatePollPage";
+import ExportPage from "./pages/ExportPage";     // ✅ eklendi
+import GraphsPage from "./pages/GraphsPage";     // ✅ eklendi
+import LoginPage from "./pages/LoginPage";       // ✅ eklendi
+import { TeamsProvider } from "./context/TeamsContext";
+
 import "./styles.css";
 
 function App() {
   return (
     <DndProvider backend={HTML5Backend}>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Board />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/" element={<Questions />} />
-          <Route path="/spin-wheel" element={<SpinWheel />} />  {/* ✅ Route içinde kendi bileşenin kullanıldı */}
-          <Route path="*" element={<h2>404 Not Found</h2>} />
-        </Routes>
-      </Router>
+      <TeamsProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Board />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/questions" element={<Questions />} />
+            <Route path="/spin-wheel" element={<SpinWheel />} />
+            <Route path="/start-poll" element={<CreatePollPage />} />
+            <Route path="/export" element={<ExportPage />} />       {/* ✅ yeni */}
+            <Route path="/graphs" element={<GraphsPage />} />       {/* ✅ yeni */}
+            <Route path="/login" element={<LoginPage />} />         {/* ✅ yeni */}
+            <Route path="*" element={<h2>404 Not Found</h2>} />
+          </Routes>
+        </Router>
+      </TeamsProvider>
     </DndProvider>
   );
 }

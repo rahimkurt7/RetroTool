@@ -1,18 +1,32 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RetroTool.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Veritaban� ba�lant�s�n� ekle
+// Veritabanı bağlantısını ekle
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<RetroToolDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+// 🔥 CORS yapılandırması
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// CORS aktif hale getiriliyor (swagger'dan önce olması önerilir)
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {

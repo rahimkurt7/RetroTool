@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Wheel } from "react-custom-roulette";
 import Questions from "./Questions";
+import useSound from "use-sound";
+import spinSound from "../assets/cark.mp3";
+
+
+
+const renkler = ["#ff7675", "#74b9ff", "#55efc4", "#ffeaa7", "#fd79a8", "#81ecec", "#fab1a0", "#dfe6e9"];
 
 const SpinWheel = () => {
-  // Kişi Çarkı için state
   const [kisiSecenekleri, setKisiSecenekleri] = useState([
     { option: "UÇAN KARPUZ" },
     { option: "MAVİ TOP" },
@@ -14,194 +19,159 @@ const SpinWheel = () => {
     { option: "BATA" },
   ]);
 
-  // Soru Çarkı için state
   const [soruSecenekleri, setSoruSecenekleri] = useState([
-    { option: "Bu sprintte takım olarak|en iyi yaptığımız şey neydi?" },
-    { option: "Sence bildiğin|en gereksiz bilgi nedir?" },
-    { option: "Sprint boyunca|en büyük zorluk neydi?" },
-    { option: "Son zamanlarda öğrendiğin|en ilginç şey nedir?" },
-    { option: "Bu sprintte hatalarımızdan|öğrendiğimiz şey neydi?" },
-    { option: "Tatilinden en ilginç|bir anını anlat!" },
+    { option: "Bu sprintte takım olarak en iyi yaptığımız şey neydi?" },
+    { option: "Sence bildiğin en gereksiz bilgi nedir?" },
+    { option: "Sprint boyunca en büyük zorluk neydi?" },
+    { option: "Son zamanlarda öğrendiğin en ilginç şey nedir?" },
+    { option: "Bu sprintte hatalarımızdan öğrendiğimiz şey neydi?" },
+    { option: "Tatilinden en ilginç bir anını anlat!" },
   ]);
 
-  // Kişi Çarkı için state
-  const [kisiDonmeliMi, setKisiDonmeliMi] = useState(false);
-  const [kazananKisi, setKazananKisi] = useState(0);
-  const [kisiSilAktif, setKisiSilAktif] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [kazananKisi, setKazananKisi] = useState(null);
+  const [kazananSoru, setKazananSoru] = useState(null);
+  const [popupAcik, setPopupAcik] = useState(false);
+  const [spinningCount, setSpinningCount] = useState(0);
 
-  // Soru Çarkı için state
-  const [soruDonmeliMi, setSoruDonmeliMi] = useState(false);
-  const [kazananSoru, setKazananSoru] = useState(0);
-  const [soruSilAktif, setSoruSilAktif] = useState(false);
+  const [play] = useSound(spinSound);
 
-  // Kişi çarkını döndürme
-  const kisiCarkiDondur = () => {
-    if (kisiSecenekleri.length === 0) return;
-    const rastgeleIndex = Math.floor(Math.random() * kisiSecenekleri.length);
-    setKazananKisi(rastgeleIndex);
-    setKisiDonmeliMi(true);
-    setKisiSilAktif(true);
-    setSoruSilAktif(false);
+  const carklariDondur = () => {
+    if (kisiSecenekleri.length === 0 || soruSecenekleri.length === 0) return;
+
+    const kisiIndex = Math.floor(Math.random() * kisiSecenekleri.length);
+    const soruIndex = Math.floor(Math.random() * soruSecenekleri.length);
+    setKazananKisi(kisiIndex);
+    setKazananSoru(soruIndex);
+    setIsSpinning(true);
+    setSpinningCount(2);
+    play(); // sesi başlat
   };
 
-  // Soru çarkını döndürme
-  const soruCarkiDondur = () => {
-    if (soruSecenekleri.length === 0) return;
-    const rastgeleIndex = Math.floor(Math.random() * soruSecenekleri.length);
-    setKazananSoru(rastgeleIndex);
-    setSoruDonmeliMi(true);
-    setSoruSilAktif(true);
-    setKisiSilAktif(false);
+  const handleStopSpinning = () => {
+    setSpinningCount((prev) => {
+      if (prev === 1) {
+        setTimeout(() => {
+          setIsSpinning(false);
+          setPopupAcik(true);
+        }, 300);
+      }
+      return prev - 1;
+    });
   };
 
-  // Kişi seçeneğini silme
-  const kisiSil = () => {
-    if (kisiSilAktif && kisiSecenekleri.length > 0) {
-      const guncellenmisKisiler = kisiSecenekleri.filter((_, idx) => idx !== kazananKisi);
-      setKisiSecenekleri(guncellenmisKisiler);
-      setKisiSilAktif(false);
-    }
-  };
-
-  // Soru seçeneğini silme
-  const soruSil = () => {
-    if (soruSilAktif && soruSecenekleri.length > 0) {
-      const guncellenmisSorular = soruSecenekleri.filter((_, idx) => idx !== kazananSoru);
-      setSoruSecenekleri(guncellenmisSorular);
-      setSoruSilAktif(false);
-    }
+  const handleDeleteFromPopup = () => {
+    const updatedKisiler = kisiSecenekleri.filter((_, i) => i !== kazananKisi);
+    const updatedSorular = soruSecenekleri.filter((_, i) => i !== kazananSoru);
+    setKisiSecenekleri(updatedKisiler);
+    setSoruSecenekleri(updatedSorular);
+    setPopupAcik(false);
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.wheelsRow}>
-        {/* Kişi Çarkı */}
-        <div style={styles.wheelContainer}>
-          <h2>Kişi Çarkı</h2>
-          <Wheel
-            mustStartSpinning={kisiDonmeliMi}
-            prizeNumber={kazananKisi}
-            data={kisiSecenekleri}
-            backgroundColors={["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#8AFF8A"]}
-            textColors={["#ffffff"]}
-            outerBorderWidth={1}
-            innerBorderWidth={1}
-            outerBorderColor={"#FF6384"}
-            innerBorderColor={"#FF6384"}
-            onStopSpinning={() => setKisiDonmeliMi(false)}
-          />
-          <button style={styles.spinButton} onClick={kisiCarkiDondur}>
-            Spin
-          </button>
-          <button
-            style={{
-              ...styles.deleteButton,
-              backgroundColor: kisiSilAktif ? "#bdbdbd" : "#e0e0e0",
-              cursor: kisiSilAktif ? "pointer" : "not-allowed",
-            }}
-            disabled={!kisiSilAktif}
-            onClick={kisiSil}
-          >
-            Delete
-          </button>
-        </div>
+        <Wheel
+          mustStartSpinning={isSpinning}
+          prizeNumber={kazananKisi ?? 0}
+          data={kisiSecenekleri}
+          onStopSpinning={handleStopSpinning}
+          backgroundColors={renkler}
+          textColors={["#2d3436"]}
+          fontSize={18}
+          textDistance={60}
+         
+          width={300}
+        />
 
-        {/* Soru Çarkı */}
-        <div style={styles.wheelContainer}>
-          <h2>Soru Çarkı</h2>
-          <Wheel
-            mustStartSpinning={soruDonmeliMi}
-            prizeNumber={kazananSoru}
-            data={soruSecenekleri}
-            backgroundColors={["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#8AFF8A"]}
-            textColors={["#ffffff"]}
-            outerBorderWidth={1}
-            innerBorderWidth={1}
-            outerBorderColor={"#36A2EB"}
-            innerBorderColor={"#36A2EB"}
-            fontSize={9}
-            textDistance={60}
-            perpendicularText={true}
-            onStopSpinning={() => setSoruDonmeliMi(false)}
-          />
+        <Wheel
+          mustStartSpinning={isSpinning}
+          prizeNumber={kazananSoru ?? 0}
+          data={soruSecenekleri.map((_, i) => ({ option: `${i + 1}` }))} // sadece numara göster
+          onStopSpinning={handleStopSpinning}
+          backgroundColors={renkler}
+          textColors={["#2d3436"]}
+          fontSize={20}
+          textDistance={60}
+          
+          width={300}
+        />
 
-          <button style={styles.spinButton} onClick={soruCarkiDondur}>
-            Spin
-          </button>
-          <button
-            style={{
-              ...styles.deleteButton,
-              backgroundColor: soruSilAktif ? "#bdbdbd" : "#e0e0e0",
-              cursor: soruSilAktif ? "pointer" : "not-allowed",
-            }}
-            disabled={!soruSilAktif}
-            onClick={soruSil}
-          >
-            Delete
-          </button>
-        </div>
-
-        {/* Sorular Bileşeni */}
         <div style={styles.questionsContainer}>
-          <Questions questionOptions={soruSecenekleri} setQuestionOptions={setSoruSecenekleri} />
+          <Questions
+            questionOptions={soruSecenekleri}
+            setQuestionOptions={setSoruSecenekleri}
+          />
+          <button
+            style={{
+              ...styles.spinButton,
+              backgroundColor: isSpinning ? "#D81B60" : "#f8c9f8",
+              color: isSpinning ? "#f8c9f8" : "#D81B60",
+              transition: "all 0.3s",
+            }}
+            onClick={carklariDondur}
+            disabled={isSpinning}
+            onMouseEnter={(e) => {
+              if (!isSpinning) e.target.style.backgroundColor = "#ff99cc";
+            }}
+            onMouseLeave={(e) => {
+              if (!isSpinning) e.target.style.backgroundColor = "#f8c9f8";
+            }}
+          >
+            SPIN
+          </button>
         </div>
       </div>
+
+      {popupAcik && (
+        <div style={styles.popup}>
+          <div style={styles.popupContent}>
+            <button style={styles.closeButton} onClick={() => setPopupAcik(false)}>✖</button>
+            <h3>🎉 Sonuçlar</h3>
+            <p><b>Kişi:</b> <span style={{ color: "#d63031" }}>{kisiSecenekleri[kazananKisi]?.option}</span></p>
+            <p><b>Soru:</b> <span style={{ color: "#0984e3" }}>{kazananSoru + 1}. {soruSecenekleri[kazananSoru]?.option}</span></p>
+            <button style={styles.deleteButton} onClick={handleDeleteFromPopup}>Delete</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-// Stil Ayarları 
 const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginTop: "50px",
-  },
-  wheelsRow: {
-    display: "flex",
-    justifyContent: "left",
-    alignItems: "left",
-    gap: "100px",
-  },
-  wheelContainer: {
-    textAlign: "center",
-    position: "relative",
-  },
+  container: { display: "flex", flexDirection: "column", alignItems: "center", marginTop: 50 },
+  wheelsRow: { display: "flex", gap: 50, alignItems: "center" },
+  questionsContainer: { display: "flex", flexDirection: "column", alignItems: "center" },
   spinButton: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80px",
-    height: "80px",
-    borderRadius: "50%",
-    backgroundColor: "#FF5733",
-    color: "white",
-    fontSize: "18px",
+    marginTop: 20,
+    padding: "12px 40px",
+    fontSize: 18,
     fontWeight: "bold",
+    borderRadius: 10,
     border: "none",
     cursor: "pointer",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-    opacity: 1,
-  
+    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+  },
+  popup: {
+    position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+    backgroundColor: "#fff", boxShadow: "0 0 15px rgba(0,0,0,0.4)",
+    padding: 30, borderRadius: 12, zIndex: 999,
+  },
+  popupContent: { textAlign: "center" },
+  closeButton: {
+    position: "absolute", top: 10, right: 10,
+    background: "none", border: "none", fontSize: 20, cursor: "pointer"
   },
   deleteButton: {
-    marginTop: "20px",
-    padding: "10px 20px",
-    fontSize: "16px",
-    fontWeight: "bold",
+    marginTop: 20,
+    backgroundColor: "#ff4d4d",
     border: "none",
-    borderRadius: "5px",
-    color: "#555",
-    width: "100px",
-    backgroundColor: "#e0e0e0",
-    cursor: "not-allowed",
-  },
+    color: "white",
+    padding: "10px 20px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "bold"
+  }
 };
 
 export default SpinWheel;
