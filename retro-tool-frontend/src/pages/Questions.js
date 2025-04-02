@@ -63,11 +63,13 @@ const styles = {
     borderRadius: "8px",
     backgroundColor: "#f9f9f9",
     textAlign: "center",
+    
   },
   questionList: {
     maxHeight: "300px",
     overflowY: "auto",
     marginBottom: "10px",
+    
   },
   questionItem: {
     display: "flex",

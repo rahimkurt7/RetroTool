@@ -4,8 +4,6 @@ import Questions from "./Questions";
 import useSound from "use-sound";
 import spinSound from "../assets/cark.mp3";
 
-
-
 const renkler = ["#ff7675", "#74b9ff", "#55efc4", "#ffeaa7", "#fd79a8", "#81ecec", "#fab1a0", "#dfe6e9"];
 
 const SpinWheel = () => {
@@ -32,7 +30,6 @@ const SpinWheel = () => {
   const [kazananKisi, setKazananKisi] = useState(null);
   const [kazananSoru, setKazananSoru] = useState(null);
   const [popupAcik, setPopupAcik] = useState(false);
-  const [spinningCount, setSpinningCount] = useState(0);
 
   const [play] = useSound(spinSound);
 
@@ -44,20 +41,20 @@ const SpinWheel = () => {
     setKazananKisi(kisiIndex);
     setKazananSoru(soruIndex);
     setIsSpinning(true);
-    setSpinningCount(2);
     play(); // sesi başlat
   };
 
+  let stopCount = 0;
+
   const handleStopSpinning = () => {
-    setSpinningCount((prev) => {
-      if (prev === 1) {
-        setTimeout(() => {
-          setIsSpinning(false);
-          setPopupAcik(true);
-        }, 300);
-      }
-      return prev - 1;
-    });
+    stopCount += 1;
+    if (stopCount === 2) {
+      stopCount = 0;
+      setTimeout(() => {
+        setIsSpinning(false);
+        setPopupAcik(true);
+      }, 300);
+    }
   };
 
   const handleDeleteFromPopup = () => {
@@ -80,21 +77,30 @@ const SpinWheel = () => {
           textColors={["#2d3436"]}
           fontSize={18}
           textDistance={60}
-         
+          
           width={300}
+        outerBorderColor="transparent" // siyah kenarlık kalktı
+         outerBorderWidth={0}           // kalınlık 0
+          innerBorderColor="transparent"
+          innerBorderWidth={0}
         />
 
         <Wheel
           mustStartSpinning={isSpinning}
           prizeNumber={kazananSoru ?? 0}
-          data={soruSecenekleri.map((_, i) => ({ option: `${i + 1}` }))} // sadece numara göster
+          data={soruSecenekleri.map((_, i) => ({ option: `${i + 1}` }))}
           onStopSpinning={handleStopSpinning}
           backgroundColors={renkler}
           textColors={["#2d3436"]}
-          fontSize={20}
+          fontSize={14}
           textDistance={60}
           
           width={300}
+          outerBorderColor="transparent"
+          outerBorderWidth={0}
+          innerBorderColor="transparent"
+          innerBorderWidth={0}
+        
         />
 
         <div style={styles.questionsContainer}>
