@@ -36,9 +36,17 @@ namespace RetroTool.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePoll([FromBody] Poll poll)
         {
-            if (string.IsNullOrWhiteSpace(poll.Question) || poll.Options == null || !poll.Options.Any())
-                return BadRequest("Soru ve en az bir şık gereklidir.");
+            // Temel doğrulama
+            if (poll == null)
+                return BadRequest("Poll nesnesi null geldi!");
 
+            if (string.IsNullOrWhiteSpace(poll.Question))
+                return BadRequest("Soru alanı zorunludur.");
+
+            if (poll.Options == null || !poll.Options.Any())
+                return BadRequest("En az bir şık gereklidir.");
+
+            // Oylar boş listeler olarak ayarlanıyor
             foreach (var option in poll.Options)
             {
                 option.Votes = new System.Collections.Generic.List<PollVote>();
@@ -63,7 +71,7 @@ namespace RetroTool.API.Controllers
             if (poll == null)
                 return NotFound("Anket bulunamadı.");
 
-            // Daha önce bu kullanıcı oy verdiyse eski oyları temizle
+            // Önceki oyları sil
             foreach (var option in poll.Options)
             {
                 var toRemove = option.Votes.Where(v => v.VotedBy == votedBy).ToList();
@@ -84,11 +92,7 @@ namespace RetroTool.API.Controllers
             });
 
             await _context.SaveChangesAsync();
-
             return Ok();
-
         }
-
     }
-
 }

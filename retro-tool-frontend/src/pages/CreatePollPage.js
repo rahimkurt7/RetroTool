@@ -1,6 +1,4 @@
-// src/pages/CreatePollPage.js
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PollList from "../components/PollList";
 import PollCreator from "../components/PollCreator";
 import FilterModal from "../components/FilterModal";
@@ -13,43 +11,73 @@ const CreatePollPage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState({ user: "", sprint: "" });
 
-  // Yeni anket oluşturulunca çağrılır
-  const handleCreatePoll = (newPoll) => {
-    const poll = {
-      id: Date.now().toString(),
-      question: newPoll.question,
-      userVote: null,
-      options: newPoll.options.map((text) => ({ text, votes: [] })),
-      createdBy: "ERAY", // örnek olarak
-      sprint: "21.02.2025", // örnek olarak
-    };
-    setPolls([...polls, poll]);
-  };
+  const API_BASE_URL = "https://localhost:7048";
 
-  // Oy kullanıldığında çağrılır
-  const handleVote = (pollId, optionIndex) => {
-    const updatedPolls = polls.map((poll) => {
-      if (poll.id === pollId) {
-        // Önceden oy kullandıysa sil
-        const newOptions = poll.options.map((opt) => ({
-          ...opt,
-          votes: opt.votes.filter((voter) => voter !== "ERAY"),
-        }));
-        // Yeni oyu ekle
-        newOptions[optionIndex].votes.push("ERAY");
-        return { ...poll, options: newOptions, userVote: optionIndex };
+  // ✅ Sayfa yüklendiğinde anketleri çek
+  useEffect(() => {
+    const fetchPolls = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/poll`);
+        const data = await response.json();
+        setPolls(data);
+      } catch (err) {
+        console.error("Anketleri çekerken hata oluştu", err);
       }
-      return poll;
-    });
-    setPolls(updatedPolls);
+    };
+
+    fetchPolls();
+  }, []);
+
+  // ✅ Yeni anket oluşturulunca backend'e gönder
+  const handleCreatePoll = async (newPoll) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/poll`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: newPoll.question,
+          createdBy: "ERAY",
+          sprint: "21.02.2025",
+          options: newPoll.options.map((text) => ({ text })),
+        }),
+      });
+
+      const createdPoll = await response.json();
+      setPolls([...polls, createdPoll]);
+    } catch (err) {
+      console.error("Anket oluşturulamadı", err);
+    }
   };
 
-  // Filtre değiştiğinde çağrılır
+  // ✅ Oy kullanıldığında backend'e gönder
+  const handleVote = async (pollId, optionIndex) => {
+    const poll = polls.find((p) => p.id === pollId);
+    if (!poll) return;
+
+    const optionId = poll.options[optionIndex].id;
+
+    try {
+      await fetch(
+        `${API_BASE_URL}/api/poll/${pollId}/vote?optionId=${optionId}&votedBy=ERAY`,
+        {
+          method: "POST",
+        }
+      );
+
+      const response = await fetch(`${API_BASE_URL}/api/poll`);
+      const updatedPolls = await response.json();
+      setPolls(updatedPolls);
+    } catch (err) {
+      console.error("Oy verme hatası", err);
+    }
+  };
+
   const handleFilterChange = (type, value) => {
     setFilters({ ...filters, [type]: value });
   };
 
-  // Filtreye göre anketleri süz
   const filteredPolls = polls.filter((poll) => {
     const matchUser = filters.user ? poll.createdBy === filters.user : true;
     const matchSprint = filters.sprint ? poll.sprint === filters.sprint : true;
@@ -58,7 +86,6 @@ const CreatePollPage = () => {
 
   return (
     <div>
-      {/* Filtre Butonları */}
       <div style={styles.header}>
         <button onClick={() => setShowFilter(true)} style={styles.filterButton}>
           Filtrele
@@ -67,17 +94,19 @@ const CreatePollPage = () => {
         <span><strong>Sprint:</strong> {filters.sprint || "Tümü"}</span>
       </div>
 
-      {/* Sayfa içeriği */}
       <div style={styles.container}>
         <div style={styles.left}>
           <PollList polls={filteredPolls} onVote={handleVote} />
         </div>
         <div style={styles.right}>
-          <PollCreator onCreatePoll={handleCreatePoll} />
+          <PollCreator onPollCreated={async () => {
+            const response = await fetch(`${API_BASE_URL}/api/poll`);
+            const data = await response.json();
+            setPolls(data);
+          }} />
         </div>
       </div>
 
-      {/* Filtre Modal */}
       <FilterModal
         visible={showFilter}
         onClose={() => setShowFilter(false)}

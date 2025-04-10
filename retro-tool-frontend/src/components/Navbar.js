@@ -1,13 +1,30 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import logo from "../assets/bilgiyön-Logo.png";
 import { Link } from "react-router-dom";
 import OptionsPanel from "./OptionsPanel";
+import LoginPopup from "./LoginPopup";
 import { TeamsContext } from "../context/TeamsContext";
 
 const Navbar = () => {
   const [isClicked, setIsClicked] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [user, setUser] = useState(null); // ✅ Kullanıcıyı state'e al
+
   const { teamsLink } = useContext(TeamsContext);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, [showLoginPopup]); // popup kapanınca güncelle
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    window.location.reload(); // sayfayı yenile
+  };
 
   const handleButtonClick = () => {
     setIsClicked(true);
@@ -26,6 +43,13 @@ const Navbar = () => {
         <img src={logo} alt="BilgiYön Yazılım" style={styles.logo} />
 
         <div style={styles.buttons}>
+          {/* ✅ Hoş geldin mesajı */}
+          {user && (
+            <span style={{ fontWeight: "bold", marginRight: "10px" }}>
+              Hoş geldin, {user.username}
+            </span>
+          )}
+
           {/* ✅ Spin a Wheel */}
           <Link to="/spin-wheel" style={{ textDecoration: "none" }}>
             <button
@@ -47,7 +71,7 @@ const Navbar = () => {
             </button>
           </Link>
 
-          {/* ✅ Teams (sadece link varsa çalışır) */}
+          {/* ✅ Teams */}
           <button
             onClick={handleTeamsClick}
             disabled={!teamsLink}
@@ -62,21 +86,21 @@ const Navbar = () => {
             Teams
           </button>
 
-          {/* ✅ Export (şimdilik pasif) */}
+          {/* ✅ Export */}
           <Link to="/export" style={{ textDecoration: "none" }}>
             <button style={{ ...styles.button, backgroundColor: "#8af596" }}>
               Export
             </button>
           </Link>
 
-          {/* ✅ Graphs (şimdilik pasif) */}
+          {/* ✅ Graphs */}
           <Link to="/graphs" style={{ textDecoration: "none" }}>
             <button style={{ ...styles.button, backgroundColor: "#d18aff" }}>
               Graphs
             </button>
           </Link>
 
-          {/* ✅ Options açılır pencere */}
+          {/* ✅ Options */}
           <button
             style={styles.optionsButton}
             onClick={() => setShowOptions(true)}
@@ -84,15 +108,30 @@ const Navbar = () => {
             ⚙ Options
           </button>
 
-          {/* ✅ Login sayfası yönlendirmesi */}
-          <Link to="/login" style={{ textDecoration: "none" }}>
-            <button style={styles.loginButton}>Login</button>
-          </Link>
+          {/* ✅ Kullanıcı yoksa Login butonu, varsa Logout butonu */}
+          {!user ? (
+            <button style={styles.loginButton} onClick={() => setShowLoginPopup(true)}>
+              Login
+            </button>
+          ) : (
+            <button
+              style={{
+                ...styles.loginButton,
+                backgroundColor: "#f44336"
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          )}
         </div>
       </nav>
 
       {/* ✅ Options panel */}
       {showOptions && <OptionsPanel onClose={() => setShowOptions(false)} />}
+
+      {/* ✅ Login popup */}
+      {showLoginPopup && <LoginPopup onClose={() => setShowLoginPopup(false)} />}
     </>
   );
 };

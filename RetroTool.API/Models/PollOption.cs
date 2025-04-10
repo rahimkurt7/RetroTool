@@ -10,13 +10,13 @@ namespace RetroTool.API.Models
         [Required]
         public string Text { get; set; }
 
+        [JsonIgnore] // JSON'dan gönderilmeyecek
         public int PollId { get; set; }
 
-        [JsonIgnore] // ✅ JSON'dan gelen veri bunu doldurmasın!
-        public Poll Poll { get; set; }
+        [JsonIgnore]
+        public Poll? Poll { get; set; }  // ❗️ DİKKAT: Poll -> Poll? (nullable yapıldı)
 
-        [JsonIgnore] // ✅ Oylar da zorunlu değil, EF bunu DB’den yükler
+        [JsonIgnore]
         public ICollection<PollVote> Votes { get; set; } = new List<PollVote>();
     }
 }
- 

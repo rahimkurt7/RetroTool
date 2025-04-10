@@ -25,36 +25,38 @@ const PollCreator = ({ onPollCreated }) => {
   };
 
   const handleCreate = async () => {
-    console.log("Tik'e basıldı!"); // ✅ TEST
+    // Validasyon
     if (!question.trim() || options.some((o) => !o.trim())) {
       alert("Lütfen soru ve tüm şıkları doldurun.");
       return;
     }
 
+    // Payload oluşturma
     const payload = {
-      question,
-      createdBy: "ERAY",        // örnek kullanıcı
-      sprint: "21.02.2025",     // örnek sprint
-      options: options.map((text) => ({ text }))
+      question: question.trim(),
+      createdBy: "ERAY",
+      sprint: "21.02.2025",
+      options: options
+        .filter((text) => text.trim() !== "")
+        .map((text) => ({ text: text.trim(), votes: [] })),
     };
 
-    console.log("Gönderilen Payload:", payload);
+    console.log("📦 Gönderilen Payload:", JSON.stringify(payload, null, 2));
 
     try {
       const response = await axios.post("https://localhost:7048/api/poll", payload);
-      console.log("Anket oluşturuldu:", response.data);
-
+      console.log("✅ Anket oluşturuldu:", response.data);
       resetForm();
       if (onPollCreated) onPollCreated(); // üst bileşene haber ver
     } catch (error) {
-        console.error("HATA:", error);
-        if (error.response) {
-          console.error("Sunucudan gelen hata:", error.response.data);
-          alert("HATA:\n" + JSON.stringify(error.response.data, null, 2));
-        } else {
-          alert("Bir ağ hatası oluştu.");
-        }
+      console.error("❌ HATA:", error);
+      if (error.response) {
+        console.error("🚨 Sunucu Yanıtı:", error.response.data);
+        alert("Sunucu hatası:\n" + JSON.stringify(error.response.data, null, 2));
+      } else {
+        alert("Ağ bağlantı hatası oluştu.");
       }
+    }
   };
 
   return (
