@@ -9,7 +9,7 @@ import HomePage from "./pages/HomePage";
 import Questions from "./pages/Questions";
 import SpinWheel from "./pages/SpinWheel";
 import CreatePollPage from "./pages/CreatePollPage";
-import ExportPage from "./pages/ExportPage";
+
 import GraphsPage from "./pages/GraphsPage";
 
 import { TeamsProvider } from "./context/TeamsContext";
@@ -28,7 +28,7 @@ function App() {
             <Route path="/questions" element={<Questions />} />
             <Route path="/spin-wheel" element={<SpinWheel />} />
             <Route path="/start-poll" element={<CreatePollPage />} />
-            <Route path="/export" element={<ExportPage />} />
+           
             <Route path="/graphs" element={<GraphsPage />} />
             <Route path="*" element={<h2>404 Not Found</h2>} />
           </Routes>

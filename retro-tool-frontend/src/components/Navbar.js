@@ -3,13 +3,15 @@ import logo from "../assets/bilgiyön-Logo.png";
 import { Link } from "react-router-dom";
 import OptionsPanel from "./OptionsPanel";
 import LoginPopup from "./LoginPopup";
+import ExportPopup from "./ExportPopup"; // ✅ export popup bileşenini ekle
 import { TeamsContext } from "../context/TeamsContext";
 
 const Navbar = () => {
   const [isClicked, setIsClicked] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [user, setUser] = useState(null); //  Kullanıcıyı state'e al
+  const [showExportPopup, setShowExportPopup] = useState(false); // ✅ yeni popup state
+  const [user, setUser] = useState(null);
 
   const { teamsLink } = useContext(TeamsContext);
 
@@ -18,12 +20,12 @@ const Navbar = () => {
     if (storedUser) {
       setUser(storedUser);
     }
-  }, [showLoginPopup]); // popup kapanınca güncelle
+  }, [showLoginPopup]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
-    window.location.reload(); // sayfayı yenile
+    window.location.reload();
   };
 
   const handleButtonClick = () => {
@@ -43,14 +45,12 @@ const Navbar = () => {
         <img src={logo} alt="BilgiYön Yazılım" style={styles.logo} />
 
         <div style={styles.buttons}>
-          {/* ✅ Hoş geldin mesajı */}
           {user && (
-            <span style={{ fontWeight: "bold", marginRight: "25px", marginLeft:"50px" }}>
+            <span style={{ fontWeight: "bold", marginRight: "25px", marginLeft: "50px" }}>
               Hoş geldin, {user.username}
             </span>
           )}
 
-          {/* ✅ Spin a Wheel */}
           <Link to="/spin-wheel" style={{ textDecoration: "none" }}>
             <button
               style={{
@@ -64,14 +64,12 @@ const Navbar = () => {
             </button>
           </Link>
 
-          {/*  Start a Poll */}
           <Link to="/start-poll" style={{ textDecoration: "none" }}>
             <button style={{ ...styles.button, backgroundColor: "#ffb347", color: "white" }}>
               Start a Poll
             </button>
           </Link>
 
-          {/*  Teams */}
           <button
             onClick={handleTeamsClick}
             disabled={!teamsLink}
@@ -86,21 +84,20 @@ const Navbar = () => {
             Teams
           </button>
 
-          {/*  Export */}
-          <Link to="/export" style={{ textDecoration: "none" }}>
-            <button style={{ ...styles.button, backgroundColor: "#8af596" }}>
-              Export
-            </button>
-          </Link>
+          {/* ✅ Export popup tetikleyici */}
+          <button
+            onClick={() => setShowExportPopup(true)}
+            style={{ ...styles.button, backgroundColor: "#8af596" }}
+          >
+            Export
+          </button>
 
-          {/* Graphs */}
           <Link to="/graphs" style={{ textDecoration: "none" }}>
             <button style={{ ...styles.button, backgroundColor: "#d18aff" }}>
               Graphs
             </button>
           </Link>
 
-          {/*  Options */}
           <button
             style={styles.optionsButton}
             onClick={() => setShowOptions(true)}
@@ -108,7 +105,6 @@ const Navbar = () => {
             ⚙ Options
           </button>
 
-          {/* ✅ Kullanıcı yoksa Login butonu, varsa Logout butonu */}
           {!user ? (
             <button style={styles.loginButton} onClick={() => setShowLoginPopup(true)}>
               Login
@@ -127,11 +123,10 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* ✅ Options panel */}
+      {/* ✅ Popuplar */}
       {showOptions && <OptionsPanel onClose={() => setShowOptions(false)} />}
-
-      {/* ✅ Login popup */}
       {showLoginPopup && <LoginPopup onClose={() => setShowLoginPopup(false)} />}
+      {showExportPopup && <ExportPopup onClose={() => setShowExportPopup(false)} />}
     </>
   );
 };
