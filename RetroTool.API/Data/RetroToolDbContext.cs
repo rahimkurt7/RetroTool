@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RetroTool.API.Models;
+using RetroToolAPI.Models;
 
 namespace RetroTool.API.Data
 {
@@ -8,8 +9,8 @@ namespace RetroTool.API.Data
         public RetroToolDbContext(DbContextOptions<RetroToolDbContext> options) : base(options) { }
 
         // 🧩 Mevcut tablolar
-        public DbSet<RetroCategory> Categories { get; set; }
-        public DbSet<RetroCard> Cards { get; set; }
+        public DbSet<Card> Cards { get; set; }
+
         public DbSet<Poll> Polls { get; set; }
         public DbSet<PollOption> PollOptions { get; set; }
         public DbSet<PollVote> PollVotes { get; set; }

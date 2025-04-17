@@ -9,7 +9,7 @@ const Navbar = () => {
   const [isClicked, setIsClicked] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [user, setUser] = useState(null); // ✅ Kullanıcıyı state'e al
+  const [user, setUser] = useState(null); //  Kullanıcıyı state'e al
 
   const { teamsLink } = useContext(TeamsContext);
 
@@ -45,7 +45,7 @@ const Navbar = () => {
         <div style={styles.buttons}>
           {/* ✅ Hoş geldin mesajı */}
           {user && (
-            <span style={{ fontWeight: "bold", marginRight: "10px" }}>
+            <span style={{ fontWeight: "bold", marginRight: "25px", marginLeft:"50px" }}>
               Hoş geldin, {user.username}
             </span>
           )}
@@ -64,14 +64,14 @@ const Navbar = () => {
             </button>
           </Link>
 
-          {/* ✅ Start a Poll */}
+          {/*  Start a Poll */}
           <Link to="/start-poll" style={{ textDecoration: "none" }}>
             <button style={{ ...styles.button, backgroundColor: "#ffb347", color: "white" }}>
               Start a Poll
             </button>
           </Link>
 
-          {/* ✅ Teams */}
+          {/*  Teams */}
           <button
             onClick={handleTeamsClick}
             disabled={!teamsLink}
@@ -86,21 +86,21 @@ const Navbar = () => {
             Teams
           </button>
 
-          {/* ✅ Export */}
+          {/*  Export */}
           <Link to="/export" style={{ textDecoration: "none" }}>
             <button style={{ ...styles.button, backgroundColor: "#8af596" }}>
               Export
             </button>
           </Link>
 
-          {/* ✅ Graphs */}
+          {/* Graphs */}
           <Link to="/graphs" style={{ textDecoration: "none" }}>
             <button style={{ ...styles.button, backgroundColor: "#d18aff" }}>
               Graphs
             </button>
           </Link>
 
-          {/* ✅ Options */}
+          {/*  Options */}
           <button
             style={styles.optionsButton}
             onClick={() => setShowOptions(true)}
