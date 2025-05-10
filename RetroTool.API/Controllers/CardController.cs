@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using RetroTool.API.Data;
 using RetroToolAPI.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RetroTool.API.Controllers
 {
@@ -42,13 +45,18 @@ namespace RetroTool.API.Controllers
         [HttpPost("delete")]
         public async Task<IActionResult> DeleteCard([FromBody] Card card)
         {
-            if (card == null || string.IsNullOrWhiteSpace(card.Content) || string.IsNullOrWhiteSpace(card.Category) || string.IsNullOrWhiteSpace(card.Username))
+            if (card == null ||
+                string.IsNullOrWhiteSpace(card.Content) ||
+                string.IsNullOrWhiteSpace(card.Category) ||
+                string.IsNullOrWhiteSpace(card.Username))
             {
                 return BadRequest("Eksik kart bilgisi gönderildi.");
             }
 
-            var existing = await _context.Cards
-                .FirstOrDefaultAsync(c => c.Content == card.Content && c.Category == card.Category && c.Username == card.Username);
+            var existing = await _context.Cards.FirstOrDefaultAsync(c =>
+                c.Content == card.Content &&
+                c.Category == card.Category &&
+                c.Username == card.Username);
 
             if (existing == null)
                 return NotFound("Kart bulunamadı.");
@@ -56,6 +64,47 @@ namespace RetroTool.API.Controllers
             _context.Cards.Remove(existing);
             await _context.SaveChangesAsync();
             return Ok("Kart silindi.");
+        }
+
+        // 🟣 Filtre verilerini getir: Kullanıcı adları ve sprintler
+        [HttpGet("filters")]
+        public IActionResult GetCardFilters()
+        {
+            var users = _context.Cards
+                .Select(c => c.Username)
+                .Distinct()
+                .ToList();
+
+            var baseStart = new DateTime(2025, 2, 17); // Sprint 1'in başlangıç tarihi (Pazartesi)
+
+            var sprintList = _context.Cards
+                .Select(c => c.CreatedAt.Date)
+                .AsEnumerable()
+                .Select(date =>
+                {
+                    var daysDiff = (date - baseStart).Days;
+                    var sprintIndex = Math.Max(0, daysDiff / 7);
+                    return $"Sprint {sprintIndex + 1}";
+                })
+                .Distinct()
+                .OrderBy(s => s)
+                .ToList();
+
+            return Ok(new { users, sprints = sprintList });
+        }
+
+        // 🟢 Kategori listesini getir
+        [HttpGet("categories")]
+        public IActionResult GetCategories()
+        {
+            var categories = _context.Cards
+                .Select(c => c.Category)
+                .Where(c => !string.IsNullOrEmpty(c))
+                .Distinct()
+                .OrderBy(c => c)
+                .ToList();
+
+            return Ok(categories);
         }
     }
 }
