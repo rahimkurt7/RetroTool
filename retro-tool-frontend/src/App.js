@@ -2,13 +2,13 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import PollListPage from './pages/PollListPage';
 
 import Navbar from "./components/Navbar";
 import Board from "./components/Board";
 import HomePage from "./pages/HomePage";
 import Questions from "./pages/Questions";
 import SpinWheel from "./pages/SpinWheel";
-import CreatePollPage from "./pages/CreatePollPage";
 
 import GraphsPage from "./pages/GraphsPage";
 
@@ -27,8 +27,7 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/questions" element={<Questions />} />
             <Route path="/spin-wheel" element={<SpinWheel />} />
-            <Route path="/start-poll" element={<CreatePollPage />} />
-           
+           <Route path="/start-poll" element={<PollListPage />} />
             <Route path="/graphs" element={<GraphsPage />} />
             <Route path="*" element={<h2>404 Not Found</h2>} />
           </Routes>

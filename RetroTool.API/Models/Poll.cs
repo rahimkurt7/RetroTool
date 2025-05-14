@@ -1,12 +1,16 @@
-﻿using RetroTool.API.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Poll
+namespace RetroToolAPI.Models
 {
-    public int Id { get; set; }
-    public string Question { get; set; }
-    public string CreatedBy { get; set; }
-    public string Sprint { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-    public ICollection<PollOption> Options { get; set; }
+    public class Poll
+    {
+        public int Id { get; set; }
+        public string Question { get; set; }
+        public string OptionText { get; set; }   // Seçenek içeriği: “Aslan”
+        public string CreatedBy { get; set; }
+        public string VotedBy { get; set; }      // Oy veren kullanıcı
+        public string SprintLabel { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+    }
 }

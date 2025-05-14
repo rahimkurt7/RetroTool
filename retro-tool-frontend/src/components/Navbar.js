@@ -1,16 +1,16 @@
 import React, { useState, useContext, useEffect } from "react";
 import logo from "../assets/bilgiyön-Logo.png";
 import { Link } from "react-router-dom";
-import OptionsPanel from "./OptionsPanel";
 import LoginPopup from "./LoginPopup";
-import ExportPopup from "./ExportPopup"; // ✅ export popup bileşenini ekle
+import ExportPopup from "./ExportPopup";
 import { TeamsContext } from "../context/TeamsContext";
+import OptionsPopup from "./OptionsPopup";
 
 const Navbar = () => {
   const [isClicked, setIsClicked] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [showExportPopup, setShowExportPopup] = useState(false); // ✅ yeni popup state
+  const [showExportPopup, setShowExportPopup] = useState(false);
+  const [showOptionsPopup, setShowOptionsPopup] = useState(false);
   const [user, setUser] = useState(null);
 
   const { teamsLink } = useContext(TeamsContext);
@@ -84,7 +84,6 @@ const Navbar = () => {
             Teams
           </button>
 
-          {/* ✅ Export popup tetikleyici */}
           <button
             onClick={() => setShowExportPopup(true)}
             style={{ ...styles.button, backgroundColor: "#8af596" }}
@@ -99,10 +98,10 @@ const Navbar = () => {
           </Link>
 
           <button
-            style={styles.optionsButton}
-            onClick={() => setShowOptions(true)}
+            onClick={() => setShowOptionsPopup(true)}
+            style={{ ...styles.button, backgroundColor: "#eeeeee", color: "#333" }}
           >
-            ⚙ Options
+            Options
           </button>
 
           {!user ? (
@@ -113,7 +112,7 @@ const Navbar = () => {
             <button
               style={{
                 ...styles.loginButton,
-                backgroundColor: "#f44336"
+                backgroundColor: "#f44336",
               }}
               onClick={handleLogout}
             >
@@ -123,10 +122,9 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* ✅ Popuplar */}
-      {showOptions && <OptionsPanel onClose={() => setShowOptions(false)} />}
       {showLoginPopup && <LoginPopup onClose={() => setShowLoginPopup(false)} />}
       {showExportPopup && <ExportPopup onClose={() => setShowExportPopup(false)} />}
+      {showOptionsPopup && <OptionsPopup onClose={() => setShowOptionsPopup(false)} />}
     </>
   );
 };
@@ -154,13 +152,6 @@ const styles = {
     border: "none",
     borderRadius: "20px",
     fontWeight: "bold",
-    cursor: "pointer",
-  },
-  optionsButton: {
-    padding: "5px 10px",
-    border: "none",
-    borderRadius: "5px",
-    backgroundColor: "#f0f0f0",
     cursor: "pointer",
   },
   loginButton: {

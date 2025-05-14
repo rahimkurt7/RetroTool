@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RetroTool.API.Data;
 
@@ -11,9 +12,11 @@ using RetroTool.API.Data;
 namespace RetroTool.API.Migrations
 {
     [DbContext(typeof(RetroToolDbContext))]
-    partial class RetroToolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511131724_CreatePollTable")]
+    partial class CreatePollTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
